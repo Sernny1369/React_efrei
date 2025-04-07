@@ -1,0 +1,27 @@
+.header {
+    background-color: #f7fafc; 
+    padding: 1rem; 
+}
+
+.header ul {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    list-style-type: none;
+}
+
+.header li{
+    font-weight: normal;
+    color: #4a5568; 
+    
+}
+
+.header li:hover{
+    font-weight: 600; 
+    color: #1a202c; 
+}
+
+a {
+    text-decoration: none;
+}
+
