@@ -1,9 +1,10 @@
 import React from 'react';
+import '../../styles/LoginForm.css';
 
 export default function ConnexionForm() {
     return (
         <>
-            <form>
+            <form className="form-container">
                 <div className="form-group">
                     <label htmlFor="email">Adresse email</label>
                     <input type="email" className="form-control" id="email" aria-describedby="emailHelp" placeholder="Entrez votre email" required />

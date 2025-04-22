@@ -1,23 +1,25 @@
 import React from 'react';
-import { useEffect, useState } from "react";
+import '../styles/Home.css';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
-    const [message, setMessage] = useState("");
-
-    useEffect(() => {
-        fetch("http://localhost:5000/api/hello")
-            .then((res) => res.json())
-            .then((data) => setMessage(data.message))
-            .catch((err) => console.error("Erreur:", err));
-    }, []);
-
     return (
-    <>
-        <h1>Bienvenue</h1>
-
-        <h2>Sur la plateforme web de l'efei</h2>
-        <p>Retrouver l'ensemble de vos services sur myEfrei</p>
-        <p className="mt-2 text-gray-600">Message du backend : {message || "Chargement..."}</p>
-    </>
-    )
+        <div className="container">
+            <div className="image-container">
+                <img src="/My_Efrei_logo.png" alt="Logo Efrei" className="image-left" />
+            </div>
+            <div className="content-container">
+                <h1>
+                    <div>
+                        Bienvenue <br /> Sur la plateforme web de l'efei
+                    </div>
+                    <div>
+                        <Link to="/login">
+                            <button type="button">Se connecter</button>
+                        </Link>
+                    </div>
+                </h1>
+            </div>
+        </div>
+    );
 }

@@ -1,0 +1,81 @@
+.form-container {
+    max-width: 400px; /* Largeur maximale du formulaire */
+    margin: 50px auto; /* Centre le formulaire horizontalement et ajoute un espace en haut */
+    padding: 20px;
+    background-color: #f9f9f9; /* Couleur de fond */
+    border: 1px solid #ddd; /* Bordure légère */
+    border-radius: 8px; /* Coins arrondis */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre légère */
+}
+
+.form-group {
+    margin-bottom: 15px; /* Espacement entre les champs */
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+input {
+    width: 100%; /* Champ prend toute la largeur */
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input:focus {
+    border-color: #007bff; /* Couleur de la bordure au focus */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Effet lumineux au focus */
+}
+
+small {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+button {
+    width: 100%; /* Bouton prend toute la largeur */
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3; /* Couleur au survol */
+}
+
+button:active {
+    background-color: #004085; /* Couleur au clic */
+}
+
+div {
+    margin-bottom: 15px; /* Espacement entre les sections */
+    font-size: 14px;
+    color: #555;
+    text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    .content-container {
+        padding: 15px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}

@@ -1,0 +1,92 @@
+.container {
+    display: flex;
+    height: 100vh; /* Prend toute la hauteur de l'écran */
+    flex-direction: row; /* Par défaut, disposition en ligne */
+}
+
+.image-container {
+    flex: 0.85; /* Prend 3/4 de l'espace */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0; /* Optionnel : couleur de fond */
+}
+
+.image-left {
+    width: 100%; /* L'image prend toute la largeur de la div */
+    height: 100%; /* L'image prend toute la hauteur de la div */
+    object-fit: contain; /* Ajuste l'image pour couvrir toute la div sans déformation */
+}
+
+.content-container {
+    flex: 1; /* Prend 1/4 de l'espace */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centre verticalement */
+    align-items: center; /* Centre horizontalement */
+    padding: 20px;
+    background-color: #A9C8C1; /* Couleur de fond du contenu */
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #A7C6A1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3; /* Couleur au survol */
+}
+
+/* Styles responsives */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Passe en disposition verticale */
+    }
+
+    .image-container {
+        flex: 1; /* L'image prend tout l'espace disponible */
+        height: 50%; /* L'image occupe 50% de la hauteur */
+    }
+
+    .content-container {
+        flex: 1; /* Prend 1/4 de l'espace */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centre verticalement */
+        align-items: center; /* Centre horizontalement */
+        padding: 20px;
+    }
+    
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    button:hover {
+        background-color: #0056b3; /* Couleur au survol */
+    }
+}
+
+@media (max-width: 480px) {
+    .image-container {
+        height: 40%; /* L'image occupe 40% de la hauteur */
+    }
+
+    .content-container {
+        height: 10%; /* Le contenu occupe 60% de la hauteur */
+        padding: 10px; /* Réduit le padding pour les petits écrans */
+        background-color: #A9C8C1;
+    }
+}
