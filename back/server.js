@@ -9,22 +9,22 @@ app.use(cors());
 app.use(express.json());
 
 // Route test
-app.get("/api/hello", (req, res) => {
+app.get("/hello", (req, res) => {
   res.json({ message: "Hello depuis le backend !" });
 });
 
 // Route test
-app.get("/api/planning", (req, res) => {
+app.get("/planning", (req, res) => {
   res.json({ message: "voici ton planing" });
 });
 
-app.post("/api/planning", (req, res) => {
+app.post("/planning", (req, res) => {
   const { planning } = req.body;
   if (!planning) {
     return res.status(400).json({ error: "Planning data is required" });
   }
   res.status(201).json({ message: "Planning received", planning });
-}
+});
 
 
 
