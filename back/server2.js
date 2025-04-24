@@ -409,6 +409,81 @@ app.delete("/sessions/:id", (req, res) => {
 });
 
 
+
+// CRUD Cours
+const cours = []; // Tableau pour stocker les cours
+
+app.get("/cours", (req, res) => {
+  const { page = 1, limit = 10, nom } = req.query;
+  const pageNumber = parseInt(page);
+  const limitNumber = parseInt(limit);
+
+  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
+    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
+  }
+  let filteredCours = cours;
+  if (nom) {
+    filteredCours = cours.filter((c) => c.nom.toLowerCase().includes(nom.toLowerCase()));
+  }
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const paginatedCours = filteredCours.slice(startIndex, endIndex);
+  if (paginatedCours.length === 0) {
+    return res.status(404).json({ error: "Aucun cours trouvé" });
+  }
+
+  res.json({
+    total: filteredCours.length,
+    page: parseInt(page),
+    limit: parseInt(limit),
+    data: paginatedCours,
+  });
+});
+
+app.post("/cours", (req, res) => {
+  const { nom } = req.body;
+  if (!nom || nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom du cours est requis et ne peut pas être vide." });
+  }
+  const existingCours = cours.find((c) => c.nom === nom);
+  if (existingCours) {
+    return res.status(400).json({ error: "Un cours avec ce nom existe déjà." });
+  }
+  const newCours = { id: cours.length + 1, nom };
+  cours.push(newCours);
+  res.status(201).json(newCours);
+});
+
+app.put("/cours/:id", (req, res) => {
+  const { id } = req.params;
+  const { nom } = req.body;
+  const coursItem = cours.find((c) => c.id === parseInt(id));
+  if (!coursItem) {
+    return res.status(404).json({ error: "Cours non trouvé" });
+  }
+  if (nom && nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom du cours ne peut pas être vide." });
+  }
+  const existingCours = cours.find((c) => c.nom === nom && c.id !== parseInt(id));
+  if (existingCours) {
+    return res.status(400).json({ error: "Un autre cours avec ce nom existe déjà." });
+  }
+  coursItem.nom = nom || coursItem.nom;
+  res.json(coursItem);
+});
+
+app.delete("/cours/:id", (req, res) => {
+  const { id } = req.params;
+  const index = cours.findIndex((c) => c.id === parseInt(id));
+  if (index === -1) {
+    return res.status(404).json({ error: "Cours non trouvé" });
+  }
+  cours.splice(index, 1);
+  res.status(204).send();
+});
+
+
+
 // Démarrer le serveur
 app.get("/", (req, res) => {
   res.send("API en cours d'exécution !");
