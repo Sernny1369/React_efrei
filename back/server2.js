@@ -186,6 +186,83 @@ app.delete("/filieres/:id", (req, res) => {
 
 
 
+// CRUD Classes
+const classes = []; // Tableau pour stocker les classes
+
+app.get("/classes", (req, res) => {
+  const { page = 1, limit = 10, nom } = req.query;
+  const pageNumber = parseInt(page);
+  const limitNumber = parseInt(limit);
+
+  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
+    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
+  }
+  let filteredClasses = classes;
+  if (nom) {
+    filteredClasses = classes.filter((c) => c.nom.toLowerCase().includes(nom.toLowerCase()));
+  }
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const paginatedClasses = filteredClasses.slice(startIndex, endIndex);
+  if (paginatedClasses.length === 0) {
+    return res.status(404).json({ error: "Aucune classe trouvée" });
+  }
+
+  res.json({
+    total: filteredClasses.length,
+    page: parseInt(page),
+    limit: parseInt(limit),
+    data: paginatedClasses,
+  });
+});
+
+app.post("/classes", (req, res) => {
+  const { nom } = req.body;
+  if (!nom || nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom de la classe est requis et ne peut pas être vide." });
+  }
+  const existingClass = classes.find((c) => c.nom === nom);
+  if (existingClass) {
+    return res.status(400).json({ error: "Une classe avec ce nom existe déjà." });
+  }
+  const newClass = { id: classes.length + 1, nom };
+  classes.push(newClass);
+  res.status(201).json(newClass);
+});
+
+app.put("/classes/:id", (req, res) => {
+  const { id } = req.params;
+  const { nom } = req.body;
+  const classItem = classes.find((c) => c.id === parseInt(id));
+  if (!classItem) {
+    return res.status(404).json({ error: "Classe non trouvée" });
+  }
+  if (nom && nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom de la classe ne peut pas être vide." });
+  }
+  const existingClass = classes.find((c) => c.nom === nom && c.id !== parseInt(id));
+  if (existingClass) {
+    return res.status(400).json({ error: "Une autre classe avec ce nom existe déjà." });
+  }
+  classItem.nom = nom || classItem.nom;
+  res.json(classItem);
+});
+
+app.delete("/classes/:id", (req, res) => {
+  const { id } = req.params;
+  const index = classes.findIndex((c) => c.id === parseInt(id));
+  if (index === -1) {
+    return res.status(404).json({ error: "Classe non trouvée" });
+  }
+  classes.splice(index, 1);
+  res.status(204).send();
+});
+
+
+
+
+
+
 // Démarrer le serveur
 app.get("/", (req, res) => {
   res.send("API en cours d'exécution !");
