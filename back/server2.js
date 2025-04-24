@@ -484,6 +484,120 @@ app.delete("/cours/:id", (req, res) => {
 
 
 
+// CRUD Notes
+const notes = []; // Tableau pour stocker les notes
+
+app.get("/notes", (req, res) => {
+  const { page = 1, limit = 10, search, eleveId } = req.query;
+  const pageNumber = parseInt(page);
+  const limitNumber = parseInt(limit);
+
+  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
+    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
+  }
+  let filteredNotes = notes;
+  if (search) {
+    filteredNotes = filteredNotes.filter((n) =>
+      n.nom.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+  if (eleveId) {
+    filteredNotes = filteredNotes.filter((n) => n.eleveId === parseInt(eleveId));
+  }
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const paginatedNotes = filteredNotes.slice(startIndex, endIndex);
+  if (paginatedNotes.length === 0) {
+    return res.status(404).json({ error: "Aucune note trouvée" });
+  }
+
+  res.json({
+    total: filteredNotes.length,
+    page: parseInt(page),
+    limit: parseInt(limit),
+    data: paginatedNotes,
+  });
+});
+
+app.post("/notes", (req, res) => {
+  const { nom, note, eleveId } = req.body;
+
+  // Validation des données
+  if (!nom || !note || !eleveId) {
+    return res.status(400).json({ error: "Nom, note et eleveId sont requis" });
+  }
+
+  // Vérifiez que l'élève existe
+  const eleve = eleves.find((e) => e.id === parseInt(eleveId));
+  if (!eleve) {
+    return res.status(404).json({ error: "Élève non trouvé" });
+  }
+
+  // Vérifiez les doublons
+  const existingNote = notes.find((n) => n.nom === nom && n.eleveId === parseInt(eleveId));
+  if (existingNote) {
+    return res.status(400).json({ error: "Une note avec ce nom existe déjà pour cet élève." });
+  }
+
+  // Validation de la note (par exemple, entre 0 et 20)
+  if (isNaN(note) || note < 0 || note > 20) {
+    return res.status(400).json({ error: "La note doit être un nombre entre 0 et 20." });
+  }
+
+  // Créez la nouvelle note
+  const newNote = { id: notes.length + 1, nom, note: parseFloat(note), eleveId: parseInt(eleveId) };
+  notes.push(newNote);
+  res.status(201).json(newNote);
+});
+
+app.put("/notes/:id", (req, res) => {
+  const { id } = req.params;
+  const { nom, note, eleveId } = req.body;
+
+  // Trouver la note à mettre à jour
+  const noteItem = notes.find((n) => n.id === parseInt(id));
+  if (!noteItem) {
+    return res.status(404).json({ error: "Note non trouvée" });
+  }
+
+  // Validation du nom
+  if (nom && nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom de la note ne peut pas être vide." });
+  }
+
+  // Validation de la note (par exemple, entre 0 et 20)
+  if (note && (isNaN(note) || note < 0 || note > 20)) {
+    return res.status(400).json({ error: "La note doit être un nombre entre 0 et 20." });
+  }
+
+  // Validation de l'eleveId
+  if (eleveId) {
+    const eleve = eleves.find((e) => e.id === parseInt(eleveId));
+    if (!eleve) {
+      return res.status(404).json({ error: "Élève non trouvé" });
+    }
+    noteItem.eleveId = parseInt(eleveId);
+  }
+
+  // Mise à jour des champs
+  noteItem.nom = nom || noteItem.nom;
+  noteItem.note = note !== undefined ? parseFloat(note) : noteItem.note;
+
+  res.json(noteItem);
+});
+
+app.delete("/notes/:id", (req, res) => {
+  const { id } = req.params;
+  const index = notes.findIndex((n) => n.id === parseInt(id));
+  if (index === -1) {
+    return res.status(404).json({ error: "Note non trouvée" });
+  }
+  notes.splice(index, 1);
+  res.status(204).send();
+});
+
+
+
 // Démarrer le serveur
 app.get("/", (req, res) => {
   res.send("API en cours d'exécution !");
