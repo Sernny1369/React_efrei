@@ -598,6 +598,7 @@ app.delete("/notes/:id", (req, res) => {
 
 
 
+
 // Démarrer le serveur
 app.get("/", (req, res) => {
   res.send("API en cours d'exécution !");
@@ -607,6 +608,12 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route non trouvée" });
 });
 
+
+// Gestion des erreurs globales
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Une erreur interne est survenue." });
+});
 
 
 // Lancer le serveur
