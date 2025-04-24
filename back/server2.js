@@ -336,6 +336,79 @@ app.delete("/profs/:id", (req, res) => {
 
 
 
+// CRUD Sessions
+const sessions = []; // Tableau pour stocker les sessions
+
+app.get("/sessions", (req, res) => {
+  const { page = 1, limit = 10, nom } = req.query;
+  const pageNumber = parseInt(page);
+  const limitNumber = parseInt(limit);
+
+  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
+    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
+  }
+  let filteredSessions = sessions;
+  if (nom) {
+    filteredSessions = sessions.filter((s) => s.nom.toLowerCase().includes(nom.toLowerCase()));
+  }
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const paginatedSessions = filteredSessions.slice(startIndex, endIndex);
+  if (paginatedSessions.length === 0) {
+    return res.status(404).json({ error: "Aucune session trouvée" });
+  }
+
+  res.json({
+    total: filteredSessions.length,
+    page: parseInt(page),
+    limit: parseInt(limit),
+    data: paginatedSessions,
+  });
+});
+
+app.post("/sessions", (req, res) => {
+  const { nom } = req.body;
+  if (!nom || nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom de la session est requis et ne peut pas être vide." });
+  }
+  const existingSession = sessions.find((s) => s.nom === nom);
+  if (existingSession) {
+    return res.status(400).json({ error: "Une session avec ce nom existe déjà." });
+  }
+  const newSession = { id: sessions.length + 1, nom };
+  sessions.push(newSession);
+  res.status(201).json(newSession);
+});
+
+app.put("/sessions/:id", (req, res) => {
+  const { id } = req.params;
+  const { nom } = req.body;
+  const session = sessions.find((s) => s.id === parseInt(id));
+  if (!session) {
+    return res.status(404).json({ error: "Session non trouvée" });
+  }
+  if (nom && nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom de la session ne peut pas être vide." });
+  }
+  const existingSession = sessions.find((s) => s.nom === nom && s.id !== parseInt(id));
+  if (existingSession) {
+    return res.status(400).json({ error: "Une autre session avec ce nom existe déjà." });
+  }
+  session.nom = nom || session.nom;
+  res.json(session);
+});
+
+app.delete("/sessions/:id", (req, res) => {
+  const { id } = req.params;
+  const index = sessions.findIndex((s) => s.id === parseInt(id));
+  if (index === -1) {
+    return res.status(404).json({ error: "Session non trouvée" });
+  }
+  sessions.splice(index, 1);
+  res.status(204).send();
+});
+
+
 // Démarrer le serveur
 app.get("/", (req, res) => {
   res.send("API en cours d'exécution !");
