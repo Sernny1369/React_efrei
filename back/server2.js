@@ -260,6 +260,79 @@ app.delete("/classes/:id", (req, res) => {
 
 
 
+// CRUD Professeurs
+const profs = []; // Tableau pour stocker les professeurs
+
+app.get("/profs", (req, res) => {
+  const { page = 1, limit = 10, nom } = req.query;
+  const pageNumber = parseInt(page);
+  const limitNumber = parseInt(limit);
+
+  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
+    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
+  }
+  let filteredProfs = profs;
+  if (nom) {
+    filteredProfs = profs.filter((p) => p.nom.toLowerCase().includes(nom.toLowerCase()));
+  }
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const paginatedProfs = filteredProfs.slice(startIndex, endIndex);
+  if (paginatedProfs.length === 0) {
+    return res.status(404).json({ error: "Aucun professeur trouvé" });
+  }
+
+  res.json({
+    total: filteredProfs.length,
+    page: parseInt(page),
+    limit: parseInt(limit),
+    data: paginatedProfs,
+  });
+});
+
+app.post("/profs", (req, res) => {
+  const { nom } = req.body;
+  if (!nom || nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom du professeur est requis et ne peut pas être vide." });
+  }
+  const formattedNom = `P.${nom.trim()}`;
+  const existingProf = profs.find((p) => p.nom === formattedNom);
+  if (existingProf) {
+    return res.status(400).json({ error: "Un professeur avec ce nom existe déjà." });
+  }
+  const newProf = { id: profs.length + 1, nom: formattedNom };
+  profs.push(newProf);
+  res.status(201).json(newProf);
+});
+
+app.put("/profs/:id", (req, res) => {
+  const { id } = req.params;
+  const { nom } = req.body;
+  const prof = profs.find((p) => p.id === parseInt(id));
+  if (!prof) {
+    return res.status(404).json({ error: "Professeur non trouvé" });
+  }
+  if (nom && nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom du professeur ne peut pas être vide." });
+  }
+  const formattedNom = nom ? `P.${nom.trim()}` : prof.nom;
+  const existingProf = profs.find((p) => p.nom === formattedNom && p.id !== parseInt(id));
+  if (existingProf) {
+    return res.status(400).json({ error: "Un autre professeur avec ce nom existe déjà." });
+  }
+  prof.nom = formattedNom;
+  res.json(prof);
+});
+
+app.delete("/profs/:id", (req, res) => {
+  const { id } = req.params;
+  const index = profs.findIndex((p) => p.id === parseInt(id));
+  if (index === -1) {
+    return res.status(404).json({ error: "Professeur non trouvé" });
+  }
+  profs.splice(index, 1);
+  res.status(204).send();
+});
 
 
 
