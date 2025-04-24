@@ -109,6 +109,83 @@ app.delete("/eleves/:id", (req, res) => {
 
 
 
+// CRUD Filières
+const filieres = []; // Tableau pour stocker les filières
+
+app.get("/filieres", (req, res) => {
+  const { page = 1, limit = 10, search } = req.query;
+
+  const pageNumber = parseInt(page);
+  const limitNumber = parseInt(limit);
+
+  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
+    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
+  }
+  let filteredFilieres = filieres;
+  if (search) {
+    filteredFilieres = filieres.filter((f) =>
+      f.nom.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const paginatedFilieres = filteredFilieres.slice(startIndex, endIndex);
+  if (paginatedFilieres.length === 0) {
+    return res.status(404).json({ error: "Aucune filière trouvée" });
+  }
+
+  res.json({
+    total: filteredFilieres.length,
+    page: parseInt(page),
+    limit: parseInt(limit),
+    data: paginatedFilieres,
+  });
+});
+
+app.post("/filieres", (req, res) => {
+  const { nom } = req.body;
+  if (!nom) {
+    return res.status(400).json({ error: "Le nom de la filière est requis" });
+  }
+  const existingFiliere = filieres.find((f) => f.nom === nom);
+  if (existingFiliere) {
+    return res.status(400).json({ error: "Une filière avec ce nom existe déjà." });
+  }
+  const newFiliere = { id: filieres.length + 1, nom };
+  filieres.push(newFiliere);
+  res.status(201).json(newFiliere);
+});
+
+app.put("/filieres/:id", (req, res) => {
+  const { id } = req.params;
+  const { nom } = req.body;
+  const filiere = filieres.find((f) => f.id === parseInt(id));
+  if (!filiere) {
+    return res.status(404).json({ error: "Filière non trouvée" });
+  }
+  if (nom && nom.trim() === "") {
+    return res.status(400).json({ error: "Le nom de la filière ne peut pas être vide." });
+  }
+  const existingFiliere = filieres.find((f) => f.nom === nom && f.id !== parseInt(id));
+  if (existingFiliere) {
+    return res.status(400).json({ error: "Une autre filière avec ce nom existe déjà." });
+  }
+  filiere.nom = nom || filiere.nom;
+  res.json(filiere);
+});
+
+app.delete("/filieres/:id", (req, res) => {
+  const { id } = req.params;
+  const index = filieres.findIndex((f) => f.id === parseInt(id));
+  if (index === -1) {
+    return res.status(404).json({ error: "Filière non trouvée" });
+  }
+  filieres.splice(index, 1);
+  res.status(204).send();
+});
+
+
+
 // Démarrer le serveur
 app.get("/", (req, res) => {
   res.send("API en cours d'exécution !");
