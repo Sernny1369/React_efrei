@@ -1,20 +1,62 @@
-import React from 'react';
-import Planning from '../componants/planning/planning';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-export default function Plan() {
+export default function Planning() {
+    const [cours, setCours] = useState([]);
     const [message, setMessage] = useState("");
-    
+    const token = localStorage.getItem("token");
+
     useEffect(() => {
-        fetch("http://localhost:5000/planning")
-        .then((res) => res.json())
-        .then((data) => setMessage(data.message))
-        .catch((err) => console.error("Erreur:", err));
-    }, []);
+        const fetchPlanning = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/planning", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setCours(data);
+                } else {
+                    const errorData = await response.json();
+                    setMessage(errorData.error);
+                }
+            } catch (err) {
+                setMessage("Erreur réseau. Veuillez réessayer.");
+            }
+        };
+
+        fetchPlanning();
+    }, [token]);
+
     return (
-    <>
-        <Planning />
-        <p className="mt-2 text-gray-600">Message du backend : {message || "Chargement..."}</p>
-    </>
-    )
+        <div>
+            <h1>Planning des cours</h1>
+            {message && <p style={{ color: "red" }}>{message}</p>}
+            {cours.length > 0 ? (
+                cours.map((cour, index) => (
+                    <div key={index} className="cours">
+                        <h2>{cour.matiere}</h2>
+                        <p><strong>Date :</strong> {cour.date}</p>
+                        <p><strong>Heure :</strong> {cour.heure}</p>
+                        <p><strong>Durée :</strong> {cour.duree}</p>
+                        <p><strong>Salle :</strong> {cour.salle}</p>
+                        <p><strong>Description :</strong> {cour.description}</p>
+                        <h3>Élèves :</h3>
+                        <ul>
+                            {cour.eleves.map(eleve => (
+                                <li key={eleve.id}>
+                                    {eleve.nom} - Note : {eleve.note}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))
+            ) : (
+                <p>Aucun cours à afficher.</p>
+            )}
+        </div>
+    );
 }

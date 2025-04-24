@@ -1,7 +1,17 @@
 import './header.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Header() {
+    const token = localStorage.getItem("token");
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // Supprime le token du localStorage
+        localStorage.removeItem("token");
+        // Redirige vers la page de connexion
+        navigate("/login");
+    };
+
     return (
         <>
             <nav className="header">
@@ -10,7 +20,12 @@ export default function Header() {
                     <li><Link to="/plan">Planning</Link></li>
                     <li><Link to="/notes">Notes</Link></li>
                     <li><Link to="/account">Mon compte</Link></li>
-                    <li><Link to="/login">Connexion</Link></li>
+                    {token &&(
+                    <li>                        
+                        <button onClick={handleLogout} className="logout-button">
+                        Déconnexion
+                    </button></li>
+                    )}
                 </ul>
             </nav>
         </>

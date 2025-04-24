@@ -63,7 +63,6 @@ button:active {
 }
 
 div {
-    margin-bottom: 15px; /* Espacement entre les sections */
     font-size: 14px;
     color: #555;
     text-align: center;

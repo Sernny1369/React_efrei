@@ -9,6 +9,7 @@ import Plan from './pages/Planning';
 import Notes from './pages/Notes';
 import Account from './pages/Account';
 import Connexion from './pages/Connexion';
+import Adddnote from './pages/Addnote';
 
 function App() {
     const location = useLocation(); // Récupère le chemin actuel
@@ -16,7 +17,7 @@ function App() {
     return (
         <>
             {/* Affiche le Header sauf si le chemin est "/" */}
-            {location.pathname !== '/' && <Header />}
+            {location.pathname !== '/' && location.pathname !== '/login' && <Header />}
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/home_log" element={<HomeLog />} />
@@ -24,6 +25,7 @@ function App() {
                 <Route path="/notes" element={<Notes />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/login" element={<Connexion />} />
+                <Route path="/addnote" element={<Adddnote />} />
             </Routes>
         </>
     );
