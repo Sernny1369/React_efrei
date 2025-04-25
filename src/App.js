@@ -14,6 +14,9 @@ import Adddcours from './pages/Admin/Addcours';
 import LoginAdmin from './pages/Admin/LoginAdmin';
 import LoginProf from './pages/Prof/LoginProf';
 import LoginStudent from './pages/Student/LoginStudent';
+import AdminRoutes from './routes/RouteAdmin';
+import ProfRoutes from './routes/RouteProf';
+import StudentRoutes from './routes/RouteStudent';
 
 function App() {
     const location = useLocation(); // Récupère le chemin actuel
@@ -24,6 +27,9 @@ function App() {
             {location.pathname !== '/' && location.pathname !== '/login' && <Header />}
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/*" element={<AdminRoutes />} />
+                <Route path="/*" element={<ProfRoutes />} />
+                <Route path="/*" element={<StudentRoutes />} />
                 <Route path="/home_log" element={<HomeLog />} />
                 <Route path="/plan" element={<Plan />} />
                 <Route path="/notes" element={<Notes />} />

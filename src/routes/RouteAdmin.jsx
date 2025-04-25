@@ -11,51 +11,13 @@ import Home from "../pages/Admin/Home";
 export default function AdminRoutes() {
     return (
         <Routes>
-            <Route
-                path="/admin"
-                element={
-
-                    <Home />
-
-                }
-            />
-            <Route
-                path="/admin/eleves"
-                element={
-
-                    <Eleves />
-                }
-            />
-            <Route
-                path="/admin/classes"
-                element={
-                    <Classes />
-                }
-            />
-            <Route
-                path="/admin/filieres"
-                element={
-                    <Filieres />
-                }
-            />
-            <Route
-                path="/admin/profs"
-                element={
-                    <Profs />
-                }
-            />
-            <Route
-                path="/admin/cours"
-                element={
-                    <Cours />
-                }
-            />
-            <Route
-                path="/admin/sessions"
-                element={
-                    <Sessions />
-                }
-            />
+            <Route path="/admin" element={<Home />} />
+            <Route path="/admin/eleves" element={<Eleves />} />
+            <Route path="/admin/classes" element={<Classes />} />
+            <Route path="/admin/filieres" element={<Filieres />} />
+            <Route path="/admin/profs" element={<Profs />} />
+            <Route path="/admin/cours" element={<Cours />} />
+            <Route path="/admin/sessions" element={<Sessions />} />
         </Routes>
     );
 }
