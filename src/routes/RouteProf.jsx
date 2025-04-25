@@ -2,6 +2,8 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Addnote from "../pages/Prof/Addnote";
 import Home from "../pages/Prof/Home";
+import Cours from "../pages/Prof/Cours";
+import Notes from "../pages/Prof/Notes";
 
 export default function ProfRoutes() {
     return (
