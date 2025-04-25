@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { fetchUserAccount } from '../utils/api'; // Import de la fonction API
+
 
 export default function Account() {
     const [user, setUser] = useState({});
@@ -7,22 +9,10 @@ export default function Account() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch("http://localhost:5000/account", {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`, // Envoyer le token dans les en-têtes
-                        "Content-Type": "application/json"
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setUser(data);
-                } else {
-                    console.error("Erreur lors de la récupération des données utilisateur");
-                }
+                const data = await fetchUserAccount(token); // Utilisation de la fonction API
+                setUser(data);
             } catch (err) {
-                console.error("Erreur réseau :", err);
+                console.error("Erreur lors de la récupération des données utilisateur :", err);
             }
         };
 

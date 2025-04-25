@@ -46,9 +46,9 @@ export default function Planning() {
                         <p><strong>Description :</strong> {cour.description}</p>
                         <h3>Élèves :</h3>
                         <ul>
-                            {cour.eleves.map(eleve => (
-                                <li key={eleve.id}>
-                                    {eleve.nom} - Note : {eleve.note}
+                            {cour.students.map(student => (
+                                <li key={student.id}>
+                                    {student.nom} - Note : {student.note}
                                 </li>
                             ))}
                         </ul>

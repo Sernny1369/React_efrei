@@ -1,14 +1,21 @@
 import React from 'react';
 import { useEffect, useState } from "react";
+import { fetchHelloMessage} from "../utils/api";
 
 export default function HomeLog() {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        fetch("http://localhost:5000/hello")
-            .then((res) => res.json())
-            .then((data) => setMessage(data.message))
-            .catch((err) => console.error("Erreur:", err));
+        const fetchMessage = async () => {
+            try {
+                const data = await fetchHelloMessage(); // Utilisation de la fonction API
+                setMessage(data.message);
+            } catch (err) {
+                console.error("Erreur:", err);
+            }
+        };
+
+        fetchMessage();
     }, []);
 
     return (

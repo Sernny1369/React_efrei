@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import '../../styles/LoginForm.css';
-import { login } from '../../utils/api';
 
 export default function ConnexionForm() {
     const [email, setEmail] = useState("");
@@ -13,13 +12,23 @@ export default function ConnexionForm() {
         e.preventDefault();
 
         try {
-            const data = await login(email, password); // Utilisation de la fonction API
-            localStorage.setItem("token", data.token); // Stocker le token dans le localStorage
-            localStorage.setItem("role", data.user.role); // Stocker le rôle de l'utilisateur
-            alert(`Bienvenue, ${data.user.email}`);
-            navigate("/home_log");
+            const response = await fetch("http://localhost:5000/login-student", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem("token", data.token); // Stocker le token dans le localStorage
+                alert(`Bienvenue, ${data.user.email}`);
+                navigate("/home_log");
+            } else {
+                const errorData = await response.json();
+                setError(errorData.error);
+            }
         } catch (err) {
-            setError(err.message || "Une erreur est survenue. Veuillez réessayer.");
+            setError("Une erreur est survenue. Veuillez réessayer.");
         }
     };
     return (
@@ -29,6 +38,7 @@ export default function ConnexionForm() {
                     <label htmlFor="email">Adresse email</label>
                     <input type="email" className="form-control" id="email" aria-describedby="emailHelp" 
                     placeholder="Entrez votre email" required value={email} onChange={(e) => setEmail(e.target.value)}/>
+                    <small id="emailHelp" className="form-text text-muted">Nous ne partagerons jamais votre email avec qui que ce soit.</small>
                 </div>
                 <div className="form-group">
                     <label htmlFor="password">Mot de passe</label>
