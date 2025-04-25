@@ -1,23 +1,6 @@
-const users = [
-    {
-        id: 0,
-        role: "admin",
-        prenom: "Admin",
-        nom: "Admin",
-        email: "admin@test.com",
-        password: "admin123",
-    },
+const students = [
     {
         id: 1,
-        role: "prof",
-        prenom: "John",
-        nom: "Doe",
-        email: "johndoe@test.com",
-        password: "password123",
-        students: []
-    },
-    {
-        id: 2,
         role: "student",
         prenom: "Jane",
         nom: "Smith",
@@ -30,7 +13,7 @@ const users = [
         ]
     },
     {
-        id: 3,
+        id: 2,
         prenom: "Charlie",
         role: "student",
         nom: "Brown",
@@ -44,16 +27,7 @@ const users = [
         ]
     },
     {
-        id: 4,
-        role: "prof",
-        prenom: "Alice",
-        nom: "Johnson",
-        email: "alicejohnson@test.com",
-        password: "password101",
-        students: []
-    },
-    {
-        id: 5,
+        id: 3,
         role: "student",
         prenom: "Bob",
         nom: "Lee",
@@ -64,7 +38,6 @@ const users = [
             { id: 2, note: 11, matiere: "Anglais" },
             { id: 3, note: 17, matiere: "Physique" }
         ]
-    },
+    }
 ]
-
-module.exports = users;
+module.exports = students;
