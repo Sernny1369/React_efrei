@@ -10,6 +10,9 @@ export default function ProfRoutes() {
         <Routes>
             <Route path="/prof" element={<Home />} />
             <Route path="/prof/add-note" element={<Addnote />} />
+            <Route path="/prof/cours" element={<Cours />} />
+            <Route path="/prof/notes" element={<Notes />} />
+            
         </Routes>
     );
 }
