@@ -1,0 +1,39 @@
+[
+    {
+      "id": 2,
+      "prenom": "Jane",
+      "nom": "Smith",
+      "email": "janesmith@test.com",
+      "classId": 1,
+      "cours": [
+        { "coursId": 1, "matiere": "Maths" },
+        { "coursId": 2, "matiere": "Anglais" },
+        { "coursId": 3, "matiere": "Physique" }
+      ]
+    },
+    {
+      "id": 3,
+      "prenom": "Charlie",
+      "nom": "Brown",
+      "email": "charliebrown@test.com",
+      "classId": 1,
+      "cours": [
+        { "coursId": 1, "matiere": "Maths" },
+        { "coursId": 2, "matiere": "Anglais" },
+        { "coursId": 3, "matiere": "Physique" }
+      ]
+    },
+    {
+      "id": 5,
+      "prenom": "Bob",
+      "nom": "Lee",
+      "email": "boblee@test.com",
+      "classId": 2,
+      "cours": [
+        { "coursId": 1, "matiere": "Maths" },
+        { "coursId": 2, "matiere": "Anglais" },
+        { "coursId": 3, "matiere": "Physique" }
+      ]
+    }
+  ]
+  

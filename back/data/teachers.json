@@ -1,0 +1,22 @@
+[
+    {
+      "id": 1,
+      "prenom": "John",
+      "nom": "Doe",
+      "email": "johndoe@test.com",
+      "classIds": [1],
+      "cours": [{ "coursId": 1, "matiere": "Maths" }]
+    },
+    {
+      "id": 4,
+      "prenom": "Alice",
+      "nom": "Johnson",
+      "email": "alicejohnson@test.com",
+      "classIds": [1, 2],
+      "cours": [
+        { "coursId": 2, "matiere": "Anglais" },
+        { "coursId": 3, "matiere": "Physique" }
+      ]
+    }
+  ]
+  

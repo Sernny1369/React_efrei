@@ -1,0 +1,48 @@
+[
+    {
+      "eleveId": 2,
+      "coursId": 1,
+      "note": 14
+    },
+    {
+      "eleveId": 3,
+      "coursId": 1,
+      "note": 15
+    },
+    {
+      "eleveId": 5,
+      "coursId": 1,
+      "note": 13
+    },
+    {
+      "eleveId": 2,
+      "coursId": 2,
+      "note": 16
+    },
+    {
+      "eleveId": 3,
+      "coursId": 2,
+      "note": 12
+    },
+    {
+      "eleveId": 5,
+      "coursId": 2,
+      "note": 11
+    },
+    {
+      "eleveId": 2,
+      "coursId": 3,
+      "note": 18
+    },
+    {
+      "eleveId": 3,
+      "coursId": 3,
+      "note": 14
+    },
+    {
+      "eleveId": 5,
+      "coursId": 3,
+      "note": 17
+    }
+  ]
+  

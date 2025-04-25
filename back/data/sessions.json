@@ -1,0 +1,39 @@
+[
+    {
+      "sessionId": 1,
+      "coursId": 1,
+      "date": "2023-10-01",
+      "heure": "10:00",
+      "duree": "2h",
+      "salle": "A101",
+      "description": "Cours de mathématiques sur les équations linéaires."
+    },
+    {
+      "sessionId": 2,
+      "coursId": 1,
+      "date": "2023-10-03",
+      "heure": "14:00",
+      "duree": "2h",
+      "salle": "A102",
+      "description": "Cours de mathématiques sur les matrices."
+    },
+    {
+      "sessionId": 3,
+      "coursId": 2,
+      "date": "2023-10-02",
+      "heure": "09:00",
+      "duree": "1h30",
+      "salle": "B201",
+      "description": "Cours d'anglais sur la grammaire."
+    },
+    {
+      "sessionId": 4,
+      "coursId": 3,
+      "date": "2023-10-04",
+      "heure": "11:00",
+      "duree": "2h",
+      "salle": "C303",
+      "description": "Cours de physique sur la mécanique."
+    }
+  ]
+  

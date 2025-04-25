@@ -1,22 +1,24 @@
 [
-    {
-        "nom": "Classe A",
-        "eleveId": [2, 3, 5],
-        "profId": 1
-    },
-    {
-        "nom": "Classe B",
-        "eleveId": [1, 4],
-        "profId": 1
-    },
-    {
-        "nom": "Classe C",
-        "eleveId": [6, 7, 8],
-        "profId": 1
-    },
-    {
-        "nom": "Classe D",
-        "eleveId": [9, 10],
-        "profId": 1
-    }
+  {
+    "id": 1,
+    "nom": "Classe A",
+    "professeurs": [
+      { "id": 1, "nom": "John Doe", "email": "johndoe@test.com", "matiere": "Maths" },
+      { "id": 4, "nom": "Alice Johnson", "email": "alicejohnson@test.com", "matiere": "Anglais" }
+    ],
+    "eleves": [
+      { "id": 2, "prenom": "Jane", "nom": "Smith", "email": "janesmith@test.com" },
+      { "id": 3, "prenom": "Charlie", "nom": "Brown", "email": "charliebrown@test.com" }
+    ]
+  },
+  {
+    "id": 2,
+    "nom": "Classe B",
+    "professeurs": [
+      { "id": 4, "nom": "Alice Johnson", "email": "alicejohnson@test.com", "matiere": "Physique" }
+    ],
+    "eleves": [
+      { "id": 5, "prenom": "Bob", "nom": "Lee", "email": "boblee@test.com" }
+    ]
+  }
 ]
