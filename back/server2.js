@@ -8,6 +8,14 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Fonction utilitaire pour valider la pagination
+const validatePagination = (page, limit) => {
+  if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
+    throw new Error("Les paramètres page et limit doivent être des nombres positifs.");
+  }
+};
+
+
 // Route test
 app.get("/hello", (req, res) => {
   res.json({ message: "Hello depuis le backend !" });
@@ -31,41 +39,43 @@ app.post("/planning", (req, res) => {
 // CRUD Élèves
 const eleves = [];
 
-app.get("/eleves", (req, res) => {
-  const { page = 1, limit = 10, search } = req.query;
-  const pageNumber = parseInt(page);
-  const limitNumber = parseInt(limit);
+app.get("/eleves", (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, search } = req.query;
+    validatePagination(page, limit);
 
-  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
-    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+
+    let filteredEleves = eleves;
+
+    // Filtrage par nom ou prénom
+    if (search) {
+      filteredEleves = eleves.filter(
+        (e) =>
+          e.nom.toLowerCase().includes(search.toLowerCase()) ||
+          e.prenom.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    // Pagination
+    const startIndex = (pageNumber - 1) * limitNumber;
+    const endIndex = pageNumber * limitNumber;
+    const paginatedEleves = filteredEleves.slice(startIndex, endIndex);
+
+    if (paginatedEleves.length === 0) {
+      return res.status(404).json({ error: "Aucun élève trouvé" });
+    }
+
+    res.json({
+      total: filteredEleves.length,
+      page: pageNumber,
+      limit: limitNumber,
+      data: paginatedEleves,
+    });
+  } catch (err) {
+    next(err);
   }
-
-  let filteredEleves = eleves;
-
-  // Filtrage par nom ou prénom
-  if (search) {
-    filteredEleves = eleves.filter(
-      (e) =>
-        e.nom.toLowerCase().includes(search.toLowerCase()) ||
-        e.prenom.toLowerCase().includes(search.toLowerCase())
-    );
-  }
-
-  // Pagination
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const paginatedEleves = filteredEleves.slice(startIndex, endIndex);
-
-  if (paginatedEleves.length === 0) {
-    return res.status(404).json({ error: "Aucun élève trouvé" });
-  }
-
-  res.json({
-    total: filteredEleves.length,
-    page: parseInt(page),
-    limit: parseInt(limit),
-    data: paginatedEleves,
-  });
 });
 
 app.post("/eleves", (req, res) => {
@@ -112,34 +122,39 @@ app.delete("/eleves/:id", (req, res) => {
 // CRUD Filières
 const filieres = []; // Tableau pour stocker les filières
 
-app.get("/filieres", (req, res) => {
-  const { page = 1, limit = 10, search } = req.query;
+app.get("/filieres", (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, search } = req.query;
+    validatePagination(page, limit);
 
-  const pageNumber = parseInt(page);
-  const limitNumber = parseInt(limit);
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
 
-  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
-    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
-  }
-  let filteredFilieres = filieres;
-  if (search) {
-    filteredFilieres = filieres.filter((f) =>
-      f.nom.toLowerCase().includes(search.toLowerCase())
-    );
-  }
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const paginatedFilieres = filteredFilieres.slice(startIndex, endIndex);
-  if (paginatedFilieres.length === 0) {
-    return res.status(404).json({ error: "Aucune filière trouvée" });
-  }
+    let filteredFilieres = filieres;
 
-  res.json({
-    total: filteredFilieres.length,
-    page: parseInt(page),
-    limit: parseInt(limit),
-    data: paginatedFilieres,
-  });
+    if (search) {
+      filteredFilieres = filieres.filter((f) =>
+        f.nom.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    const startIndex = (pageNumber - 1) * limitNumber;
+    const endIndex = pageNumber * limitNumber;
+    const paginatedFilieres = filteredFilieres.slice(startIndex, endIndex);
+
+    if (paginatedFilieres.length === 0) {
+      return res.status(404).json({ error: "Aucune filière trouvée" });
+    }
+
+    res.json({
+      total: filteredFilieres.length,
+      page: pageNumber,
+      limit: limitNumber,
+      data: paginatedFilieres,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.post("/filieres", (req, res) => {
@@ -189,31 +204,36 @@ app.delete("/filieres/:id", (req, res) => {
 // CRUD Classes
 const classes = []; // Tableau pour stocker les classes
 
-app.get("/classes", (req, res) => {
-  const { page = 1, limit = 10, nom } = req.query;
-  const pageNumber = parseInt(page);
-  const limitNumber = parseInt(limit);
+app.get("/classes", (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, nom } = req.query;
+    validatePagination(page, limit);
 
-  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
-    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
-  }
-  let filteredClasses = classes;
-  if (nom) {
-    filteredClasses = classes.filter((c) => c.nom.toLowerCase().includes(nom.toLowerCase()));
-  }
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const paginatedClasses = filteredClasses.slice(startIndex, endIndex);
-  if (paginatedClasses.length === 0) {
-    return res.status(404).json({ error: "Aucune classe trouvée" });
-  }
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    let filteredClasses = classes;
 
-  res.json({
-    total: filteredClasses.length,
-    page: parseInt(page),
-    limit: parseInt(limit),
-    data: paginatedClasses,
-  });
+    if (nom) {
+      filteredClasses = classes.filter((c) =>
+        c.nom.toLowerCase().includes(nom.toLowerCase())
+      );
+    }
+    const startIndex = (pageNumber - 1) * limitNumber;
+    const endIndex = pageNumber * limitNumber;
+    const paginatedClasses = filteredClasses.slice(startIndex, endIndex);
+    if (paginatedClasses.length === 0) {
+      return res.status(404).json({ error: "Aucune classe trouvée" });
+    }
+
+    res.json({
+      total: filteredClasses.length,
+      page: pageNumber,
+      limit: limitNumber,
+      data: paginatedClasses,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.post("/classes", (req, res) => {
@@ -263,31 +283,36 @@ app.delete("/classes/:id", (req, res) => {
 // CRUD Professeurs
 const profs = []; // Tableau pour stocker les professeurs
 
-app.get("/profs", (req, res) => {
-  const { page = 1, limit = 10, nom } = req.query;
-  const pageNumber = parseInt(page);
-  const limitNumber = parseInt(limit);
+app.get("/profs", (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, nom } = req.query;
+    validatePagination(page, limit);
 
-  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
-    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
-  }
-  let filteredProfs = profs;
-  if (nom) {
-    filteredProfs = profs.filter((p) => p.nom.toLowerCase().includes(nom.toLowerCase()));
-  }
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const paginatedProfs = filteredProfs.slice(startIndex, endIndex);
-  if (paginatedProfs.length === 0) {
-    return res.status(404).json({ error: "Aucun professeur trouvé" });
-  }
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    let filteredProfs = profs;
 
-  res.json({
-    total: filteredProfs.length,
-    page: parseInt(page),
-    limit: parseInt(limit),
-    data: paginatedProfs,
-  });
+    if (nom) {
+      filteredProfs = profs.filter((p) =>
+        p.nom.toLowerCase().includes(nom.toLowerCase())
+      );
+    }
+    const startIndex = (pageNumber - 1) * limitNumber;
+    const endIndex = pageNumber * limitNumber;
+    const paginatedProfs = filteredProfs.slice(startIndex, endIndex);
+    if (paginatedProfs.length === 0) {
+      return res.status(404).json({ error: "Aucun professeur trouvé" });
+    }
+
+    res.json({
+      total: filteredProfs.length,
+      page: pageNumber,
+      limit: limitNumber,
+      data: paginatedProfs,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.post("/profs", (req, res) => {
@@ -339,31 +364,36 @@ app.delete("/profs/:id", (req, res) => {
 // CRUD Sessions
 const sessions = []; // Tableau pour stocker les sessions
 
-app.get("/sessions", (req, res) => {
-  const { page = 1, limit = 10, nom } = req.query;
-  const pageNumber = parseInt(page);
-  const limitNumber = parseInt(limit);
+app.get("/sessions", (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, nom } = req.query;
+    validatePagination(page, limit);
 
-  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
-    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
-  }
-  let filteredSessions = sessions;
-  if (nom) {
-    filteredSessions = sessions.filter((s) => s.nom.toLowerCase().includes(nom.toLowerCase()));
-  }
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const paginatedSessions = filteredSessions.slice(startIndex, endIndex);
-  if (paginatedSessions.length === 0) {
-    return res.status(404).json({ error: "Aucune session trouvée" });
-  }
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    let filteredSessions = sessions;
 
-  res.json({
-    total: filteredSessions.length,
-    page: parseInt(page),
-    limit: parseInt(limit),
-    data: paginatedSessions,
-  });
+    if (nom) {
+      filteredSessions = sessions.filter((s) =>
+        s.nom.toLowerCase().includes(nom.toLowerCase())
+      );
+    }
+    const startIndex = (pageNumber - 1) * limitNumber;
+    const endIndex = pageNumber * limitNumber;
+    const paginatedSessions = filteredSessions.slice(startIndex, endIndex);
+    if (paginatedSessions.length === 0) {
+      return res.status(404).json({ error: "Aucune session trouvée" });
+    }
+
+    res.json({
+      total: filteredSessions.length,
+      page: pageNumber,
+      limit: limitNumber,
+      data: paginatedSessions,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.post("/sessions", (req, res) => {
@@ -413,31 +443,36 @@ app.delete("/sessions/:id", (req, res) => {
 // CRUD Cours
 const cours = []; // Tableau pour stocker les cours
 
-app.get("/cours", (req, res) => {
-  const { page = 1, limit = 10, nom } = req.query;
-  const pageNumber = parseInt(page);
-  const limitNumber = parseInt(limit);
+app.get("/cours", (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, nom } = req.query;
+    validatePagination(page, limit);
 
-  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
-    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
-  }
-  let filteredCours = cours;
-  if (nom) {
-    filteredCours = cours.filter((c) => c.nom.toLowerCase().includes(nom.toLowerCase()));
-  }
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const paginatedCours = filteredCours.slice(startIndex, endIndex);
-  if (paginatedCours.length === 0) {
-    return res.status(404).json({ error: "Aucun cours trouvé" });
-  }
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    let filteredCours = cours;
 
-  res.json({
-    total: filteredCours.length,
-    page: parseInt(page),
-    limit: parseInt(limit),
-    data: paginatedCours,
-  });
+    if (nom) {
+      filteredCours = cours.filter((c) =>
+        c.nom.toLowerCase().includes(nom.toLowerCase())
+      );
+    }
+    const startIndex = (pageNumber - 1) * limitNumber;
+    const endIndex = pageNumber * limitNumber;
+    const paginatedCours = filteredCours.slice(startIndex, endIndex);
+    if (paginatedCours.length === 0) {
+      return res.status(404).json({ error: "Aucun cours trouvé" });
+    }
+
+    res.json({
+      total: filteredCours.length,
+      page: pageNumber,
+      limit: limitNumber,
+      data: paginatedCours,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.post("/cours", (req, res) => {
@@ -487,36 +522,39 @@ app.delete("/cours/:id", (req, res) => {
 // CRUD Notes
 const notes = []; // Tableau pour stocker les notes
 
-app.get("/notes", (req, res) => {
-  const { page = 1, limit = 10, search, eleveId } = req.query;
-  const pageNumber = parseInt(page);
-  const limitNumber = parseInt(limit);
+app.get("/notes", (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, search, eleveId } = req.query;
+    validatePagination(page, limit);
 
-  if (isNaN(pageNumber) || isNaN(limitNumber) || pageNumber < 1 || limitNumber < 1) {
-    return res.status(400).json({ error: "Page et limite doivent être des nombres positifs." });
-  }
-  let filteredNotes = notes;
-  if (search) {
-    filteredNotes = filteredNotes.filter((n) =>
-      n.nom.toLowerCase().includes(search.toLowerCase())
-    );
-  }
-  if (eleveId) {
-    filteredNotes = filteredNotes.filter((n) => n.eleveId === parseInt(eleveId));
-  }
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const paginatedNotes = filteredNotes.slice(startIndex, endIndex);
-  if (paginatedNotes.length === 0) {
-    return res.status(404).json({ error: "Aucune note trouvée" });
-  }
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    let filteredNotes = notes;
 
-  res.json({
-    total: filteredNotes.length,
-    page: parseInt(page),
-    limit: parseInt(limit),
-    data: paginatedNotes,
-  });
+    if (search) {
+      filteredNotes = filteredNotes.filter((n) =>
+        n.nom.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    if (eleveId) {
+      filteredNotes = filteredNotes.filter((n) => n.eleveId === parseInt(eleveId));
+    }
+    const startIndex = (pageNumber - 1) * limitNumber;
+    const endIndex = pageNumber * limitNumber;
+    const paginatedNotes = filteredNotes.slice(startIndex, endIndex);
+    if (paginatedNotes.length === 0) {
+      return res.status(404).json({ error: "Aucune note trouvée" });
+    }
+
+    res.json({
+      total: filteredNotes.length,
+      page: pageNumber,
+      limit: limitNumber,
+      data: paginatedNotes,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.post("/notes", (req, res) => {
