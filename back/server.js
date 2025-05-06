@@ -13,14 +13,8 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-// Configuration CORS
-const corsOptions = {
-    origin: ["https://react-efrei.vercel.app"], // Autorisez votre domaine déployé
-    methods: ["GET", "POST", "PUT", "DELETE"], // Méthodes HTTP autorisées
-    allowedHeaders: ["Content-Type", "Authorization"], // Headers autorisés
-};
-app.use(cors(corsOptions));
 
+app.use(cors());
 app.use(express.json());
 app.use("/admin", adminRoutes);
 app.use("/prof", profRoutes);
